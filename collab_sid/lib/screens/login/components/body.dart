@@ -8,13 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import './background.dart';
 
-class Body extends StatelessWidget {
-  const Body({
-    Key key,
-  }) : super(key: key);
+class Body extends StatefulWidget {
+  Body(this.userLogin);
+  final void Function(String email, String password, BuildContext ctx) userLogin ;
+  @override
+  _BodyState createState() => _BodyState();
+}
 
+class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
+    String email,password;
     Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
@@ -33,14 +37,28 @@ class Body extends StatelessWidget {
             SizedBox(height: size.height * 0.03),
             RoundedInputField(
               hintText: "Your Email",
-              onChanged: (value) {},
+              onChanged: (value) {
+                email = value;
+                if (value.isEmpty || !value.contains('@')) {
+                  return 'Please enter valid email address';
+                }
+                return null;
+              },
             ),
             RoundedPasswordField(
-              onChanged: (value) {},
+              onChanged: (value) {
+                password = value;
+                if (value.isEmpty || value.length < 7) {
+                  return 'Please enter valid Password';
+                }
+                return null;
+              },
             ),
             RoundedButton(
               text: "LOGIN",
-              press: () {},
+              press: () {
+                widget.userLogin(email.trim(), password.trim(), context);
+              },
             ),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(

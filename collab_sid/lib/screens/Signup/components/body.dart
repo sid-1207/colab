@@ -52,7 +52,7 @@ class _BodyState extends State<Body> {
               onChanged: (value) {
                 password = value;
                 if (value.isEmpty || value.length < 7) {
-                  return 'Please enter valid email address';
+                  return 'Please enter valid Password';
                 }
                 return null;
               },

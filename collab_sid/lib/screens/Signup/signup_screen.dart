@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import './components/body.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../screens/home/home.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     try{
        authResult = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext ctx) => HomeScreen(),));
     }on PlatformException catch(err)
     {
       var message="An error occured";
