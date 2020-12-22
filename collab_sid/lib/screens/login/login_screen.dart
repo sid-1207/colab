@@ -1,12 +1,40 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../screens/home/home.dart';
 import './components/body.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _auth = FirebaseAuth.instance;
+  void _userLogin(String email, String password, BuildContext ctx) async {
+    UserCredential authResult;
+    try{
+       authResult = await _auth.signInWithEmailAndPassword(
+        email: email, password: password);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext ctx) => HomeScreen(),));
+    }on PlatformException catch(err)
+    {
+      var message="An error occured";
+      if(err.message!=null)
+      {
+        message=err.message;
+      }
+      Scaffold.of(ctx).showSnackBar(SnackBar(content:Text(message)));
+    }catch(err)
+    {
+      print(err);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Body(),
+      body: Body(_userLogin),
     );
   }
 }
