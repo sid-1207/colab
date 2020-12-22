@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "569939500348",
+    "project_id": "colab-cc886",
+    "storage_bucket": "colab-cc886.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569939500348:android:7e39ccd286c04ec5e41239",
+        "android_client_info": {
+          "package_name": "com.example.collab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "569939500348-tqvk95chbflmklimgdku2ho3r33lqjat.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAgsbazWE7tCylmXTW9n9XNUT4lFg2Ay0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "569939500348-tqvk95chbflmklimgdku2ho3r33lqjat.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
