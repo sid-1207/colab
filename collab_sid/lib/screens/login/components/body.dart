@@ -1,7 +1,10 @@
+import 'package:collab/screens/home/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import '../../../constants.dart';
 import '../../../screens/Signup/signup_screen.dart';
 import '../../../components/already_have_an_account_check.dart';
 import '../../../components/rounded_button.dart';
-//import '../../../constants.dart';
 import '../../../components/rounded_password_field.dart';
 import '../../../components/rounded_input_field.dart';
 import 'package:flutter/material.dart';
@@ -9,20 +12,53 @@ import 'package:flutter_svg/flutter_svg.dart';
 import './background.dart';
 
 class Body extends StatefulWidget {
-  Body(this.userLogin);
-  final void Function(String email, String password, BuildContext ctx) userLogin ;
   @override
   _BodyState createState() => _BodyState();
 }
 
 class _BodyState extends State<Body> {
+  bool loading = false;
+  var _auth = FirebaseAuth.instance;
+  void userLogin(String email, String password, BuildContext ctx) async {
+    UserCredential authResult;
+    try {
+      setState(() {
+        loading = true;
+      });
+      authResult = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (BuildContext ctx) => HomeScreen(),
+      ));
+    } on PlatformException catch (err) {
+      var message = "An error occured";
+      if (err.message != null) {
+        message = err.message;
+        setState(() {
+          loading = false;
+        });
+      }
+      Scaffold.of(ctx).showSnackBar(SnackBar(content: Text(message)));
+    } catch (err) {
+      print(err);
+      Scaffold.of(ctx).showSnackBar(SnackBar(
+        content: Text("Invalid Credentials !"),
+        backgroundColor: kPrimaryColor,
+      ));
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    String email,password;
+    String email, password;
+
     Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
-              child: Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
@@ -54,12 +90,14 @@ class _BodyState extends State<Body> {
                 return null;
               },
             ),
-            RoundedButton(
-              text: "LOGIN",
-              press: () {
-                widget.userLogin(email.trim(), password.trim(), context);
-              },
-            ),
+            loading
+                ? CircularProgressIndicator()
+                : RoundedButton(
+                    text: "LOGIN",
+                    press: () {
+                      userLogin(email.trim(), password.trim(), context);
+                    },
+                  ),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
               press: () {

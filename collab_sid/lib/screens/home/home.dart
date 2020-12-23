@@ -9,8 +9,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Home Page"),),
-      body: Center(child: Text("Home Screen"),),
-    );
+        appBar: AppBar(
+          title: Text("Home Page"),
+          actions: [
+            Icon(Icons.filter_1),
+          ],
+        ),
+        body: Column(
+          children: [],
+        ));
   }
 }
