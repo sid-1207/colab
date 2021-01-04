@@ -6,10 +6,10 @@ import 'package:collab/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import './background.dart';
-
+import 'package:collab/components/roundednamefield.dart';
 class Body extends StatefulWidget {
   Body(this.buildUser);
-  final void Function(String email, String password, BuildContext ctx)
+  final void Function(String email, String password,String name, BuildContext ctx)
       buildUser;
 
   @override
@@ -17,8 +17,7 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  String email, password;
-
+  String email, password,name;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -37,6 +36,16 @@ class _BodyState extends State<Body> {
             SvgPicture.asset(
               "assets/icons/signup.svg",
               height: size.height * 0.35,
+            ),
+              RoundedNameField(
+              hintText: "Your Name",
+              onChanged: (value) {
+                name = value;
+                if (value.isEmpty) {
+                  return 'Please enter valid Name';
+                }
+                return null;
+              },
             ),
             RoundedInputField(
               hintText: "Your Email",
@@ -60,7 +69,7 @@ class _BodyState extends State<Body> {
             RoundedButton(
               text: "SIGN UP",
               press: () {
-                widget.buildUser(email.trim(), password.trim(), context);
+                widget.buildUser(email.trim(), password.trim(), name.trim(), context);
               },
             ),
             SizedBox(

@@ -1,4 +1,4 @@
-import 'package:collab/screens/home/home.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import '../../../constants.dart';
@@ -10,6 +10,7 @@ import '../../../components/rounded_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import './background.dart';
+import '../../home/home_screen.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -27,9 +28,7 @@ class _BodyState extends State<Body> {
       });
       authResult = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (BuildContext ctx) => HomeScreen(),
-      ));
+     Navigator.of(context).pushReplacementNamed(HomeScreen1.routeName);
     } on PlatformException catch (err) {
       var message = "An error occured";
       if (err.message != null) {

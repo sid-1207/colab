@@ -2,6 +2,9 @@ import 'screens/welcome/welcome.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'package:firebase_core/firebase_core.dart';
+import './screens/Signup/Profile/profile_form.dart';
+import './screens/home/home_screen.dart';
+import './screens/create/create_screen.dart';
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -20,6 +23,11 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
       ),
       home: WelcomeScreen(),
+      routes: {
+        HomeScreen1.routeName:(ctx)=>HomeScreen1(),
+        ProfileFormScreen.routeName:(ctx)=>ProfileFormScreen(),
+        CreateScreen.routeName:(ctx)=>CreateScreen(),
+      },
     );
   }
 }
