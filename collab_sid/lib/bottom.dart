@@ -62,7 +62,6 @@ class _BottomTabsState extends State<BottomTabs> {
             });
           break;
           case 2:
-          print("here");
           setState(() {
               Navigator.of(context).pushReplacementNamed(HomeScreen1.routeName);
             });

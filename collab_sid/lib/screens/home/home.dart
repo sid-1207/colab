@@ -1,126 +1,189 @@
 import 'package:flutter/material.dart';
 import '../../constants.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../ProjectDetail/project_detail_screen.dart';
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final plist = [
-    {
-      "title": "Flutter Project",
-      "tags": ["Dart", "Flutter", "Apps"],
-      "members_req": 5,
-      "members": 2,
-      "desc":
-          "A mobile application, also referred to as a mobile app or simply an app, is a computer program or software application designed to run on a mobile device such as a phone, tablet, or watch. Apps were originally intended for productivity assistance such as email, calendar, and contact databases, but the public demand for apps caused rapid expansion into other areas such as mobile games, factory automation, GPS and location-based services, order-tracking, and ticket purchases, so that there are now millions of apps available. ",
-      "creator": "Samkit",
-    },
-    {
-      "title": "Flutter Project",
-      "tags": ["Dart", "Flutter", "Apps"],
-      "members_req": 5,
-      "members": 2,
-      "desc":
-          "A mobile application, also referred to as a mobile app or simply an app, is a computer program or software application designed to run on a mobile device such as a phone, tablet, or watch. Apps were originally intended for productivity assistance such as email, calendar, and contact databases, but the public demand for apps caused rapid expansion into other areas such as mobile games, factory automation, GPS and location-based services, order-tracking, and ticket purchases, so that there are now millions of apps available. ",
-      "creator": "Samkit",
-    },
-    {
-      "title": "Flutter Project",
-      "tags": ["Dart", "Flutter", "Apps"],
-      "members_req": 5,
-      "members": 2,
-      "desc":
-          "A mobile application, also referred to as a mobile app or simply an app, is a computer program or software application designed to run on a mobile device such as a phone, tablet, or watch. Apps were originally intended for productivity assistance such as email, calendar, and contact databases, but the public demand for apps caused rapid expansion into other areas such as mobile games, factory automation, GPS and location-based services, order-tracking, and ticket purchases, so that there are now millions of apps available. ",
-      "creator": "Samkit",
-    },
-    {
-      "title": "Flutter Project",
-      "tags": ["Dart", "Flutter", "Apps"],
-      "members_req": 5,
-      "members": 2,
-      "desc":
-          "A mobile application, also referred to as a mobile app or simply an app, is a computer program or software application designed to run on a mobile device such as a phone, tablet, or watch. Apps were originally intended for productivity assistance such as email, calendar, and contact databases, but the public demand for apps caused rapid expansion into other areas such as mobile games, factory automation, GPS and location-based services, order-tracking, and ticket purchases, so that there are now millions of apps available. ",
-      "creator": "Samkit",
-    },
-    {
-      "title": "Flutter Project",
-      "tags": ["Dart", "Flutter", "Apps"],
-      "members_req": 5,
-      "members": 2,
-      "desc":
-          "A mobile application, also referred to as a mobile app or simply an app, is a computer program or software application designed to run on a mobile device such as a phone, tablet, or watch. Apps were originally intended for productivity assistance such as email, calendar, and contact databases, but the public demand for apps caused rapid expansion into other areas such as mobile games, factory automation, GPS and location-based services, order-tracking, and ticket purchases, so that there are now millions of apps available. ",
-      "creator": "Samkit",
-    },
-    {
-      "title": "Flutter Project",
-      "tags": ["Dart", "Flutter", "Apps"],
-      "members_req": 5,
-      "members": 2,
-      "desc":
-          "A mobile application, also referred to as a mobile app or simply an app, is a computer program or software application designed to run on a mobile device such as a phone, tablet, or watch. Apps were originally intended for productivity assistance such as email, calendar, and contact databases, but the public demand for apps caused rapid expansion into other areas such as mobile games, factory automation, GPS and location-based services, order-tracking, and ticket purchases, so that there are now millions of apps available. ",
-      "creator": "Samkit",
-    },
-  ];
+  var userData;
+  var currentUser = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemBuilder: (context, index) => Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            child: Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(35),
-                  color: kPrimaryLightColor),//Colors.grey[300]),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ListTile(
-                    title: Text(plist[index]["title"], style: TextStyle(color: textColor),),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          plist[index]["tags"].toString(),
-                        ),
-                        Divider(),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Text(
-                              "Members : ${plist[index]["members"]}/${plist[index]["members_req"]}",
-                              style: TextStyle(color: textColor),),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Text(
-                            "${plist[index]["desc"]}",
-                            style: TextStyle(color: textColor),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Text(
-                            "Started by - ${plist[index]["creator"]}",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: textColor),
-                          ),
-                        ),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.bookmark),
-                      onPressed: () {},
-                    ),
-                  ),
-                ],
-              ),
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('projects')
+          .snapshots(),
+      builder: (ctx, streamSnapshot) {
+        if (streamSnapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.black,
             ),
-        ),
-        itemCount: plist.length,
-      );
+          );
+        }
+        final userData = streamSnapshot.data;
+        return ListView.builder(
+            itemCount: userData.docs.length,
+            itemBuilder: (ctx, index) {
+              final doc = userData.docs[index];
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                child: Container(
+                  width: 6,
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[700]),
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        onTap: (){
+                           return Navigator.of(context).push(MaterialPageRoute(
+                        builder: (builder) => ProjectDetailScreen(userData.docs[index])
+                      ));
+                        },
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              doc["title"],
+                              //plist[index]["title"],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                  color: Colors.black),
+                            ),
+                            Icon(
+                              Icons.star_border,
+                              color: Colors.yellow,
+                              size: 36,
+                            ),
+                          ],
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "Owner -",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 16, color: kPrimaryColor),
+                                ),
+                                Text(
+                                  " ${doc["started_by"]}",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.grey[700]),
+                                ),
+                              ],
+                            ),
+                            Divider(thickness: 2, color: Colors.black),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Members : ",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17,
+                                        color: kPrimaryColor),
+                                  ),
+                                  Text(
+                                    "${doc["members_enrolled"]}/${doc["members"]}",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17,
+                                        color: Colors.black),
+                                  ),
+                                  SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.1),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Starting: ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                            color: Colors.grey[700]),
+                                      ),
+                                      Text(
+                                        "${doc["startDate"]} ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                            color: kPrimaryColor),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Text(
+                                "${doc["description"]}",
+                                style:
+                                    TextStyle(fontSize: 18, color: textColor),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  doc["tags"].toString(),
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                      fontStyle: FontStyle.italic),
+                                ),
+                                // FlatButton(
+                                //     onPressed: () {
+                                //       Scaffold.of(ctx).showSnackBar(SnackBar(
+                                //         content:
+                                //             Container(height:20,child: Center(child: Text("Request Sent to the Owner !",style: TextStyle(color: Colors.white),))),
+                                //         backgroundColor: Colors.black,
+                                //       ));
+                                //     },
+                                //     child: Container(
+                                //       padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                                //       decoration: BoxDecoration(
+                                //           border: Border.all(),
+                                //           borderRadius:
+                                //               BorderRadius.circular(5)),
+                                //       child: Text(
+                                //         "JOIN",
+                                //         style: TextStyle(fontSize: 18),
+                                //       ),
+                                //     ))
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            });
+      },
+    );
   }
 }

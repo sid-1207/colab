@@ -1,14 +1,16 @@
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import './components/body.dart';
-
+import '../home/home.dart';
+import 'package:flutter/services.dart';
+import '../../constants.dart';
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  /*final _auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   bool loading = false ;
   void _userLogin(String email, String password, BuildContext ctx) async {
     UserCredential authResult;
@@ -35,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
           loading = false;
         });
     }
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {

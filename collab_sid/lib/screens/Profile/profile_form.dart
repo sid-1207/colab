@@ -25,7 +25,6 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
   var currentUser, userData;
   final picker = ImagePicker();
   void selectImage() async {
-    print("hi");
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     setState(() {
       if (pickedFile != null) {
@@ -100,7 +99,6 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                     child: TextField(
                       onChanged: (value) {
                         bio = value;
-                        print(bio);
                       },
                       maxLines: 4,
                       decoration: InputDecoration(
@@ -123,7 +121,6 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                   setState(() {
                     name = userData['name'];
                   });
-                  print(name);
                 },
                 leading: Text(
                   "Personal Details ",
@@ -208,10 +205,6 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                                     chosenGender = "Female";
                                   });
                                 }
-
-                                print(chosenGender[7]);
-
-                                print(gender);
                               },
                               equallyAligned: true,
                               animationDuration: Duration(milliseconds: 400),

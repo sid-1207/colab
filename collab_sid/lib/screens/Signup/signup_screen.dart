@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import './components/body.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import './Profile/profile_form.dart';
+import '../Profile/profile_form.dart';
 class SignUpScreen extends StatefulWidget {
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
