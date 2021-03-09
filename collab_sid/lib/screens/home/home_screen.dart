@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../bottom.dart';
 import '../home/components/search_list.dart';
 import '../home/home.dart';
+import './starred.dart';
+import './enrolled.dart';
 // import './home.dart';
 // import './components/search_list.dart';
 import '../../constants.dart';
@@ -92,9 +94,9 @@ class _HomeScreen1State extends State<HomeScreen1>
       body: TabBarView(
         controller: tabController,
         children: [
+          EnrolledScreen(),
           HomeScreen(),
-          HomeScreen(),
-          HomeScreen(),
+          StarredScreen(),
         ],
       ),
       floatingActionButton: FloatingActionButton(

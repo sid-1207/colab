@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../constants.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../ProjectDetail/project_detail_screen.dart';
-class HomeScreen extends StatefulWidget {
+import '../../constants.dart';
+
+class StarredScreen extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _StarredScreenState createState() => _StarredScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _StarredScreenState extends State<StarredScreen> {
   var userData;
   var currentUser = FirebaseAuth.instance.currentUser;
 
@@ -18,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
       stream: FirebaseFirestore.instance
           .collection('users')
           .doc(currentUser.uid)
-          .collection('projects')
+          .collection('starred')
           .snapshots(),
       builder: (ctx, streamSnapshot) {
         if (streamSnapshot.connectionState == ConnectionState.waiting) {
@@ -47,10 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ListTile(
-                        onTap: (){
-                           return Navigator.of(context).push(MaterialPageRoute(
-                        builder: (builder) => ProjectDetailScreen(userData.docs[index])
-                      ));
+                        onTap: () {
+                          return Navigator.of(context).push(MaterialPageRoute(
+                              builder: (builder) =>
+                                  ProjectDetailScreen(userData.docs[index])));
                         },
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,10 +64,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                   fontSize: 24,
                                   color: Colors.black),
                             ),
-                            Icon(
-                              Icons.star_border,
-                              color: Colors.yellow,
-                              size: 36,
+                            GestureDetector(
+                              onTap: () async {
+                                await FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(currentUser.uid)
+                                    .collection('starred')
+                                    .doc(doc.id)
+                                    .delete();
+                              },
+                              child: Icon(
+                                Icons.star_outlined,
+                                color: Colors.yellow,
+                                size: 36,
+                              ),
                             ),
                           ],
                         ),

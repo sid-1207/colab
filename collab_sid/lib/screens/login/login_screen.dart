@@ -28,11 +28,11 @@ class _LoginScreenState extends State<LoginScreen> {
           loading = false;
         });
       }
-      Scaffold.of(ctx).showSnackBar(SnackBar(content:Text(message)));
+      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content:Text(message)));
     }catch(err)
     {
       print(err);
-      Scaffold.of(ctx).showSnackBar(SnackBar(content:Text("Invalid Credentials !"), backgroundColor: kPrimaryColor,));
+      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content:Text("Invalid Credentials !"), backgroundColor: kPrimaryColor,));
       setState(() {
           loading = false;
         });

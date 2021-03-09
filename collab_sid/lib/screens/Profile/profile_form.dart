@@ -17,7 +17,8 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
   var chosenGender;
   var _datetime;
   var selectedGender;
-  List tags = new List();
+  List tags = [];
+  List starred=[];
   var bio, name, dob, institution, degree;
 
   final GlobalKey<TagsState> _globalKey = GlobalKey<TagsState>();
@@ -63,6 +64,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
                   'dateofbirth': _datetime,
                   'degree': degree,
                   'institution': institution,
+                  'starred':starred,
                 });
                 await FirebaseFirestore.instance
                     .collection('users')

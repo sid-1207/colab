@@ -31,8 +31,12 @@ class _CreateScreenState extends State<CreateScreen> {
   var description = "";
   var title = "";
   List tags = [];
-  List requested=[];
-  List joined=[];
+  List requestedNames = [];
+  List requestedIds = [];
+  List joinedIds = [];
+  List joinedNames = [];
+  List waitingNames=[];
+  //List starredBy=[];
   final GlobalKey<TagsState> _globalKey = GlobalKey<TagsState>();
   int currentValue = 2;
   var currentUser, userData;
@@ -50,9 +54,10 @@ class _CreateScreenState extends State<CreateScreen> {
           .collection('users')
           .doc(currentUser.uid)
           .get();
-      var newDoc=await FirebaseFirestore.instance.collection("projects").doc();
+      var newDoc =
+          await FirebaseFirestore.instance.collection("projects").doc();
       newDoc.set({
-        'ownerId':currentUser.uid,
+        'ownerId': currentUser.uid,
         'title': title,
         'tags': selectedList,
         'members': currentValue,
@@ -60,8 +65,12 @@ class _CreateScreenState extends State<CreateScreen> {
         'startDate': DateFormat('MMM yyyy').format(selectedDate),
         'members_enrolled': 0,
         'started_by': userData['name'],
-        'requested':requested,
-        'joined':joined,
+        'requestedNames': requestedNames,
+        'joinedNames': joinedNames,
+        'requestedIds': requestedIds,
+        'joinedIds': joinedIds,
+        'waitingNames':waitingNames,
+        //'starredBy':starredBy,
       });
       await FirebaseFirestore.instance
           .collection('users')
@@ -69,7 +78,7 @@ class _CreateScreenState extends State<CreateScreen> {
           .collection('projects')
           .doc(newDoc.id)
           .set({
-          'ownerId':currentUser.uid,
+        'ownerId': currentUser.uid,
         'title': title,
         'tags': selectedList,
         'members': currentValue,
@@ -77,8 +86,12 @@ class _CreateScreenState extends State<CreateScreen> {
         'startDate': DateFormat('MMM yyyy').format(selectedDate),
         'members_enrolled': 0,
         'started_by': userData['name'],
-        'requested':requested,
-        'joined':joined,
+        'requestedNames': requestedNames,
+        'joinedNames': joinedNames,
+        'requestedIds': requestedIds,
+        'joinedIds': joinedIds,
+        'waitingNames':waitingNames,
+        //'starredBy':starredBy,
       });
     }
   }
@@ -91,7 +104,7 @@ class _CreateScreenState extends State<CreateScreen> {
       ),
       bottomNavigationBar: Container(
         margin: EdgeInsets.only(top: 20),
-        child: FlatButton(
+        child: TextButton(
             onPressed: () {
               _submitForm();
               Navigator.of(context).pushReplacementNamed(HomeScreen1.routeName);

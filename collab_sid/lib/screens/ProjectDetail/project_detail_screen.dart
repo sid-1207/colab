@@ -21,7 +21,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
         color: kPrimaryColor,
         child: Container(
             color: kPrimaryColor,
-            child: FlatButton(
+            child: TextButton(
                 onPressed: () {},
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

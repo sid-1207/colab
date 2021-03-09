@@ -37,10 +37,10 @@ class _BodyState extends State<Body> {
           loading = false;
         });
       }
-      Scaffold.of(ctx).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(message)));
     } catch (err) {
       print(err);
-      Scaffold.of(ctx).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
         content: Text("Invalid Credentials !"),
         backgroundColor: kPrimaryColor,
       ));
@@ -100,7 +100,7 @@ class _BodyState extends State<Body> {
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
               press: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) {

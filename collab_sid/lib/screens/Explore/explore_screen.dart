@@ -14,9 +14,34 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen>
     with TickerProviderStateMixin {
-  var userData;
-  var currentUser;
-  List requested=[];
+  var currentUser = FirebaseAuth.instance.currentUser;
+  List requestedNames = [];
+  List requestedIds = [];
+  List starred = [];
+  List pending = [];
+  var userData1, starLogo = Icons.star_border;
+  // showOverlay(BuildContext context) {
+  //   OverlayState overlayState = Overlay.of(context);
+  //   OverlayEntry overlayEntry = OverlayEntry(
+  //       builder: (context) => Positioned(
+  //             bottom:24,
+  //             right:96,
+  //             child: CircleAvatar(
+  //               radius: 10,
+  //               backgroundColor: Colors.red,
+  //             ),
+  //           ));
+  //           overlayState.insert(overlayEntry);
+  // }
+  IconData getLogo(var doc, List starred) {
+    //print(userData['starred']);
+    //print(doc.id);
+    if (starred.contains(doc.id))
+      return Icons.star;
+    else
+      return Icons.star_border;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +73,18 @@ class _ExploreScreenState extends State<ExploreScreen>
               ),
             );
           }
+          //print(starred.length);
 
+          // for (int i = 0; i < userData.docs.length; i++) {
+          //   starred.add(false);
+          //   pending.add(false);
+          //   if (starred.length > userData.docs.length)
+          //     starred.removeRange(userData.docs.length, starred.length);
+          //    if (pending.length > userData.docs.length)
+          //     pending.removeRange(userData.docs.length, pending.length);
+          // }
+          // print(starred);
+          // print(pending);
           final userData = streamSnapshot.data;
           return ListView.builder(
               itemCount: userData.docs.length,
@@ -68,10 +104,32 @@ class _ExploreScreenState extends State<ExploreScreen>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
-                          onTap: () {
-                            return Navigator.of(context).push(MaterialPageRoute(
-                                builder: (builder) =>
-                                    ProjectDetailScreen(userData.docs[index])));
+                          onTap: () async {
+                            userData1 =
+                                await FirebaseFirestore //The user who is willing to join
+                                    .instance
+                                    .collection('users')
+                                    .doc(currentUser.uid)
+                                    .get();
+                            //print(currentUser.uid);
+                            if (doc['waitingNames']
+                                .contains(userData1['name'])) {
+                              return Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (builder) => ProjectDetailScreen(
+                                          userData.docs[index])));
+                            } else {
+                              ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+                                content: Container(
+                                    height: 20,
+                                    child: Center(
+                                        child: Text(
+                                      "You aren't allowed to View this project!",
+                                      style: TextStyle(color: Colors.white),
+                                    ))),
+                                backgroundColor: Colors.black,
+                              ));
+                            }
                           },
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,10 +142,51 @@ class _ExploreScreenState extends State<ExploreScreen>
                                     fontSize: 24,
                                     color: Colors.black),
                               ),
-                              Icon(
-                                Icons.star_border,
-                                color: Colors.yellow,
-                                size: 36,
+                              GestureDetector(
+                                onTap: () async {
+                                  userData1 =
+                                      await FirebaseFirestore //The user who is willing to join
+                                          .instance
+                                          .collection('users')
+                                          .doc(currentUser.uid)
+                                          .collection('profile')
+                                          .doc(currentUser.uid)
+                                          .get();
+                                  starred = userData1['starred'];
+                                  if (starred.contains(doc.id)) {
+                                    starred.remove(doc.id);
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(currentUser.uid)
+                                        .collection('profile')
+                                        .doc(currentUser.uid)
+                                        .update({'starred': starred});
+                                    // setState(() {
+                                    //   starLogo = Icons.star_border;
+                                    // });
+                                  } else {
+                                    starred.add(doc.id);
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(currentUser.uid)
+                                        .collection('profile')
+                                        .doc(currentUser.uid)
+                                        .update({'starred': starred});
+                                    // setState(() {
+                                    //   starLogo = Icons.star;
+                                    // });
+                                  }
+                                  setState(() {
+                                    print("set");
+                                    starLogo=getLogo(doc, starred);
+                                    print(starLogo);
+                                  });
+                                },
+                                child: Icon(
+                                  starLogo,
+                                  color: Colors.yellow,
+                                  size: 36,
+                                ),
                               ),
                             ],
                           ),
@@ -177,9 +276,10 @@ class _ExploreScreenState extends State<ExploreScreen>
                                         color: Colors.black,
                                         fontStyle: FontStyle.italic),
                                   ),
-                                  FlatButton(
+                                  TextButton(
                                     onPressed: () async {
-                                      Scaffold.of(ctx).showSnackBar(SnackBar(
+                                      ScaffoldMessenger.of(ctx)
+                                          .showSnackBar(SnackBar(
                                         content: Container(
                                             height: 20,
                                             child: Center(
@@ -192,15 +292,88 @@ class _ExploreScreenState extends State<ExploreScreen>
                                       ));
                                       currentUser =
                                           FirebaseAuth.instance.currentUser;
-                                      var userData1 = await FirebaseFirestore
-                                          .instance
+                                      userData1 =
+                                          await FirebaseFirestore //The user who is willing to join
+                                              .instance
+                                              .collection('users')
+                                              .doc(currentUser.uid)
+                                              .get();
+                                      requestedNames = doc['requestedNames'];
+                                      requestedNames.add(userData1['name']);
+                                      requestedIds = doc['requestedIds'];
+                                      requestedIds.add(userData1.id);
+                                      //print(userData1['name']);
+                                      //print(userData1.id);
+                                      await FirebaseFirestore.instance
+                                          .collection('projects')
+                                          .doc(doc.id)
+                                          .update({
+                                        'requestedNames': requestedNames,
+                                        'requestedIds': requestedIds,
+                                      });
+                                      await FirebaseFirestore.instance
                                           .collection('users')
-                                          .doc(currentUser.uid)
-                                          .get();
-                                        requested=doc['requested'];
-                                        requested.add(userData1.id);
-                                     await FirebaseFirestore.instance.collection('projects').doc(doc.id).update({'requested':requested});
-                                     await FirebaseFirestore.instance.collection('users').doc(doc['ownerId']).collection('projects').doc(doc.id).update({'requested':requested});
+                                          .doc(doc['ownerId'])
+                                          .collection('projects')
+                                          .doc(doc.id)
+                                          .update({
+                                        'requestedNames': requestedNames,
+                                        'requestedIds': requestedIds,
+                                      });
+
+                                      //} else {
+                                      //   ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+                                      //     content: Container(
+                                      //         height: 20,
+                                      //         child: Center(
+                                      //             child: Text(
+                                      //           "Request Withdrawn!",
+                                      //           style: TextStyle(
+                                      //               color: Colors.white),
+                                      //         ))),
+                                      //     backgroundColor: Colors.black,
+                                      //   ));
+                                      //   currentUser =
+                                      //       FirebaseAuth.instance.currentUser;
+                                      //   userData1 =
+                                      //       await FirebaseFirestore //The user who is willing to join
+                                      //           .instance
+                                      //           .collection('users')
+                                      //           .doc(currentUser.uid)
+                                      //           .get();
+                                      //   requestedNames = doc['requestedNames'];
+                                      //   requestedNames
+                                      //       .remove(userData1['name']);
+                                      //   requestedIds = doc['requestedIds'];
+                                      //   requestedIds.remove(userData1.id);
+                                      //   //print(userData1['name']);
+                                      //   //print(userData1.id);
+                                      //   await FirebaseFirestore.instance
+                                      //       .collection('projects')
+                                      //       .doc(doc.id)
+                                      //       .update({
+                                      //     'requestedNames': requestedNames,
+                                      //     'requestedIds': requestedIds,
+                                      //   });
+                                      //   await FirebaseFirestore.instance
+                                      //       .collection('users')
+                                      //       .doc(doc['ownerId'])
+                                      //       .collection('projects')
+                                      //       .doc(doc.id)
+                                      //       .update({
+                                      //     'requestedNames': requestedNames,
+                                      //     'requestedIds': requestedIds,
+                                      //   });
+                                      //   await FirebaseFirestore.instance
+                                      //       .collection('users')
+                                      //       .doc(doc['ownerId'])
+                                      //       .collection('projects')
+                                      //       .doc(doc.id)
+                                      //       .update({
+                                      //     'requestedNames': requestedNames,
+                                      //     'requestedIds': requestedIds,
+                                      //   });
+                                      // }
                                     },
                                     child: Container(
                                       padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
@@ -210,10 +383,11 @@ class _ExploreScreenState extends State<ExploreScreen>
                                               BorderRadius.circular(5)),
                                       child: Text(
                                         "REQUEST",
-                                        style: TextStyle(fontSize: 18),
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.black),
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                             ],
